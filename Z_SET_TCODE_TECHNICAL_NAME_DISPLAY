@@ -1,0 +1,26 @@
+*================================================================
+*= Report to run function module PRGN_SET_BROWSER_OPTIONS_USER, =
+*= to set transaction technical name display for all users.     =
+*=--------------------------------------------------------------=
+*= ILIXANDR, 19-mar-2019                                        =
+*================================================================
+REPORT Z_SET_TCODE_TECHNICAL_NAME_DISPLAY.
+TABLES: USR02.
+DATA: T_USR TYPE TABLE OF USR02,
+      W_USR TYPE          USR02.
+
+SELECT-OPTIONS: TOP_USR FOR USR02-BNAME.
+
+CHECK TOP_USR-low <> SPACE.
+
+SELECT * INTO TABLE T_USR
+  FROM USR02
+  WHERE BNAME IN TOP_USR.
+  
+LOOP AT T_USR INTO W_USR.
+
+  CALL FUNCTION 'PRGN_SET_BROWSER_OPTIONS_USER'
+    EXPORTING
+      UNAME = W_USR-BNAME
+      FLAG4 = 'X'.
+ENDLOOP.
